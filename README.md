@@ -7,5 +7,5 @@ our task was to extend it with an interesting functionality
 using AJAX.
 
 Task descriptions can be found here:
-* [Make a calculator using JS and CSS3](description#1.md)
-* [Extend the calculator's funcationality](description#2.md)
+* [Make a calculator using JS and CSS3](description%231.md)
+* [Extend the calculator's funcationality](description%232.md)
