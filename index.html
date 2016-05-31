@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+
+    <!-- style.css uses no animation -->
+    <!-- animated.css uses transition on hover and key-press -->
+    <link type="text/css" rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="calculator">
+        <!-- screen and clear key -->
+        <div id="top">
+            <span class="key clear">C</span>
+            <span class="screen">DISPLAY 0.</span>
+        </div>
+
+        <!-- number and operator keys -->
+        <div id="keypad">
+            <div class="row">
+                <span class="key">7</span>
+                <span class="key">8</span>
+                <span class="key">9</span>
+                <span class="key operator">÷</span>
+            </div>
+            <div class="row">
+                <span class="key">4</span>
+                <span class="key">5</span>
+                <span class="key">6</span>
+                <span class="key operator">x</span>
+            </div>
+            <div class="row">
+                <span class="key">1</span>
+                <span class="key">2</span>
+                <span class="key">3</span>
+                <span class="key operator">-</span>
+            </div>
+            <div class="row last-row">
+                <span class="key">0</span>
+                <span class="key">.</span>
+                <span class="key eval">=</span>
+                <span class="key operator">+</span>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

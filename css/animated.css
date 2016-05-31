@@ -1,0 +1,176 @@
+/* Basic reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    /* Better text styling */
+    font: bold 14px sans-serif;
+}
+
+/* Finally adding some IE9 fallbacks for gradients to finish things up */
+
+/* A nice BG gradient */
+html {
+    height: 100%;
+    background: skyblue;
+    background: radial-gradient(ellipse, lightskyblue, blue);
+    background-size: cover;
+}
+
+/* Using box shadows to create 3D effects */
+#calculator {
+    width: 325px;
+    height: auto;
+    margin: 300px auto;
+    padding: 20px;
+
+    background: lightgreen;
+    border-radius: 3px;
+    box-shadow: 5px 10px 15px black;
+}
+
+/* Top and keypad sizes */
+#top {
+    width: 285px;
+    height: 47px;
+}
+
+#keypad {
+    width: 292px;
+    height: 188px;
+    margin: 0 -7px -11px 0;  /* must overflow to #calculator padding */
+    padding: 0 7px 11px 0;
+}
+
+#top, #keypad, .row {
+    /* Clearing overflow between top and keypad */
+    overflow: hidden;
+}
+
+#keypad .row {
+    width: 292px;
+    height: 47px;
+    margin: 0 -7px 0 0; /* must overflow to #keypad padding */
+    padding: 0;
+}
+
+#keypad .row.last-row {
+    margin-bottom: -11px;
+}
+
+/* Inset shadow on the screen to create indent */
+#top .screen {
+    float: right;
+    width: 212px;
+    height: 40px;
+    margin-bottom: 7px;
+    padding: 0 10px;
+
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    box-shadow: inset 2px 4px rgba(0, 0, 0, 0.2);
+
+    /* Typography */
+    font: bold 17px "Lucida Console";
+    color: white;
+    text-align: right;
+    line-height: 40px;
+    letter-spacing: 1px;
+    text-shadow: 2px 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Key style */
+.key {
+    float: left;
+    width: 66px;
+    height: 36px;
+    margin: 0 7px 11px 0;
+
+    position: relative;
+    top: 0;
+    left: 0;
+
+    background: #FFFFFF;
+    background: linear-gradient(#FFFFFF, #BBBBBB);
+    border-radius: 3px;
+    box-shadow: 2px 4px rgba(0, 0, 0, 0.2);
+
+    /* Typography */
+    font: bold 14px 'Cambria Math';
+    color: #888888;
+    line-height: 36px;
+    text-align: center;
+    /*text-indent: 0;*/
+
+    cursor: pointer;
+
+    /* prevent selection of text inside keys */
+    -webkit-user-select: none;
+    user-select: none;
+
+    /* Smoothing out hover and active states using css3 transitions */
+    transition: all 0.2s ease;
+}
+
+/* Style different type of keys (operators/evaluate/clear) differently */
+.key.operator {
+    background: #FF00FF;
+    background: linear-gradient(#FF00FF, #BB00BB);
+    color: #880088;
+}
+
+.key.eval {
+    background: #00FFFF;
+    background: linear-gradient(#00FFFF, #00BBBB);
+    color: #008888;
+}
+
+.key.clear {
+    background: #FF0000;
+    background: linear-gradient(#FF0000, #BB0000);
+    color: #880000;
+}
+
+/* Some hover effects */
+.key:hover {
+    background: #888888;
+    background: linear-gradient(#888888, #555555);
+    color: #FFFFFF;
+}
+
+.key.operator:hover {
+    background: #008800;
+    background: linear-gradient(#008800, #005500);
+    color: #00FF00;
+}
+
+.key.eval:hover {
+    background: #880000;
+    background: linear-gradient(#880000, #550000);
+    color: #FF0000;
+}
+
+.key.clear:hover {
+    background: #008888;
+    background: linear-gradient(#008888, #005555);
+    color: #00FFFF;
+}
+
+/* Simulating "pressed" effect on active state of the keys by removing the box-shadow and moving the keys down a bit */
+.key:active {
+    left: 2px;
+    top: 4px;
+    box-shadow: none;
+}
+
+/*.key.eval:active {
+    box-shadow: 0px 0px #717a33;
+    top: 4px;
+}*/
+
+/*.key.clear:active {
+    left: 2px;
+    top: 4px;
+    box-shadow: 0px 0px #d3545d;
+}*/

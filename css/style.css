@@ -1,0 +1,156 @@
+/* Full reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    /* Better text-style fallback */
+    font: bold 14px sans-serif;
+}
+
+/* background gradient */
+html {
+    height: 100%;
+    background: skyblue;
+    background: radial-gradient(ellipse, lightskyblue, blue);
+    background-size: cover;
+}
+
+/* Calculator with shadow-3D */
+#calculator {
+    width: 325px;
+    height: auto;
+    margin: 300px auto;
+    padding: 20px;
+
+    background: lightgreen;
+    border-radius: 3px;
+    box-shadow: 5px 10px 15px black;
+}
+
+/* Top and keypad sizes */
+#top {
+    width: 285px;
+    height: 47px;
+}
+
+#keypad {
+    width: 292px;
+    height: 188px;
+    margin: 0 -7px -11px 0; /* must overflow to #calculator padding */
+    padding: 0 7px 11px 0;
+}
+
+#top, #keypad, .row {
+    /* Clearing overflow between top and keypad */
+    overflow: hidden;
+}
+
+#keypad .row {
+    width: 292px;
+    height: 47px;
+    margin: 0 -7px 0 0; /* must overflow to #keypad padding */
+    padding: 0;
+}
+
+#keypad .row.last-row {
+    margin-bottom: -11px;
+}
+
+/* Top screen style */
+#top .screen {
+    float: right;
+    width: 212px;
+    height: 40px;
+    margin-bottom: 7px;
+    padding: 0 10px;
+
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    box-shadow: inset 2px 4px rgba(0, 0, 0, 0.2);
+
+    /* Screen-typography */
+    font: bold 17px "Lucida Console";
+    color: white;
+    text-align: right;
+    line-height: 40px;
+    letter-spacing: 1px;
+    text-shadow: 2px 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* Key-style */
+.key {
+    float: left;
+    width: 66px;
+    height: 36px;
+    margin: 0 7px 11px 0;
+
+    background: #FFFFFF;
+    background: linear-gradient(#FFFFFF, #BBBBBB);
+    border-radius: 3px;
+    box-shadow: 2px 4px rgba(0, 0, 0, 0.2);
+
+    /* Key-typography */
+    font: bold 14px "Cambria Math";
+    color: #888888;
+    text-align: center;
+    text-indent: 0;
+    line-height: 36px;
+
+    cursor: pointer;
+
+    /* Prevent selection of text inside keys */
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Different styles on different keys */
+.key.operator {
+    background: #FF00FF;
+    background: linear-gradient(#FF00FF, #BB00BB);
+    color: #880088;
+}
+
+.key.eval {
+    background: #00FFFF;
+    background: linear-gradient(#00FFFF, #00BBBB);
+    color: #008888;
+}
+
+.key.clear {
+    background: #FF0000;
+    background: linear-gradient(#FF0000, #BB0000);
+    color: #880000;
+}
+
+/* Hover effect by changing color */
+.key:hover {
+    background: #888888;
+    background: linear-gradient(#888888, #555555);
+    color: #FFFFFF;
+}
+
+.key.operator:hover {
+    background: #008800;
+    background: linear-gradient(#008800, #005500);
+    color: #00FF00;
+}
+
+.key.eval:hover {
+    background: #880000;
+    background: linear-gradient(#880000, #550000);
+    color: #FF0000;
+}
+
+.key.clear:hover {
+    background: #008888;
+    background: linear-gradient(#008888, #005555);
+    color: #00FFFF;
+}
+
+/* Button-press effect by changing shadow and moving text */
+.key:active {
+    line-height: 40px;
+    text-indent: 2px;
+    box-shadow: inset 2px 4px rgba(0, 0, 0, 0.2);
+}
