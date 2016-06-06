@@ -69,10 +69,11 @@
 
     // after event-handlers, real calculator-logic
     var operators = ['+', '-', 'x', '÷'];
-    var regex = /^(\-?([0-9]+|([0-9]*\.[0-9]*)|Infinity|NaN)([\+\-\*\/x÷]([0-9]+|([0-9]*\.[0-9]*)|Infinity|NaN))*)?$/;  // regex to quick-text expressions
+    var validator = /^(\-?([0-9]+|([0-9]*\.[0-9]*)|Infinity|NaN)([\+\-\*\/x÷]([0-9]+|([0-9]*\.[0-9]*)|Infinity|NaN))*)?$/;  // regex to quick-text expressions
+    // var splitter = /[0-9]|\.|[\+\-\*\/x÷]|=|Infinity|NaN]/g;  // regex to split an expression to its digits
     var decimalAdded = false;
 
-    function push(value) {  // let's enter something into our calculator
+    function push(value) {  // let's enter something into our calculator  -- only one digit at a time
         var strValue = value.toString().replace(/\*/g, 'x').replace(/\//, '÷');  // for compatibility with *, /, and real numeric
         if (topScreen.innerHTML.length > 0)
             var lastChar = topScreen.innerHTML[topScreen.innerHTML.length - 1];
@@ -119,22 +120,25 @@
         return '';
     }
 
-    function pushMany(expr) {  // batched-enter
-        var checkedExpr = topScreen.innerHTML + expr.toString();
-        if (!checkedExpr.split('=').every(function (elem, ind, arr) {  // let's split it by '='
+    function pushMany(exprChain) {  // batched-enter
+        var expressions = exprChain.split('=');  // let's split it by '='
+        if (!expressions.every(function (expr, ind, arr) {
                 if (ind === 0)  // the first expression
-                    return regex.test(elem);  // must mach prefixed by screen-content
+                    return validator.test(topScreen.innerHTML + expr);  // must mach prefixed by screen-content
                 else  // in case of the rest
-                    return regex.test('0.0' + elem);  // we can use 0.0 instead of the real result of the last expression
+                    return validator.test('0.0' + expr);  // we can use 0.0 instead of the real result of the last expression
             }))
-            throw 'Parameter \'expr\' prefixed with screen-content in function \'calculator.pushMany\' ' +
-                'must be numbers separated by operators\n' +
-                'You can also use expression-chain with \'=\' as delimiter';
-        clear();
+            throw 'Parameter \'exprChain\' prefixed with screen-content in function \'calculator.pushMany\' ' +
+                'must be an expression-chain with \'=\' as delimiter\n' +
+                'Each expression must be numbers separated by operators.\n' +
+                'No clear-character (\'C\') allowed.';
         var answer = '';
-        // TODO how about iterating through the '='-splitted expressions instead of individual characters?
-        checkedExpr.match(/[0-9]|\.|[\+\-\*\/x÷]|=|Infinity|NaN]/g).forEach( function (currentExpr) {
-            answer += push(currentExpr);
+        expressions.forEach( function (expr, ind, arr) {
+            if (ind > 0)
+                answer += push('=');
+            Array.prototype.forEach.call(expr, function (digit) {
+                answer += push(digit);
+            });
         });
         return answer;
     }
