@@ -134,8 +134,10 @@
                 'No clear-character (\'C\') allowed.';
         var answer = topScreen.innerHTML;
         expressions.forEach( function (expr, ind, arr) {
-            if (ind > 0)
-                answer += push('=');
+            if (ind > 0) {
+                eval();
+                answer += '=' + topScreen.innerHTML;
+            }
             Array.prototype.forEach.call(expr, function (digit) {
                 answer += push(digit);
             });
