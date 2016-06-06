@@ -7,6 +7,7 @@
     app.pushMany = pushMany;  // multiple-character version of the above
     app.eval = eval;  // evaluates expression on screen, writes result on screen and returns it
     app.clear = clear;  // clears screen
+    app.infoEnabled = true;  // specifies weather the app has to collect information about numbers
 
     // To make it clear:
     // 'eval' returns a number
@@ -15,80 +16,102 @@
     // 'clear' returns nothing
 
     // firstly, event-handlers
+    var keys;
+    var topScreen;
+    var bottomScreen;
+
     function init(event) {
-        // selecting keys and top screen:
-        screen = document.querySelector('#top .screen');  // problems with old browsers
-        keys = document.querySelectorAll('.key');
-        window.bla = keys;
-
-        // adding functions as 'click' event-handlers, so as you don't have to invoke them from HTML:
-        Array.prototype.forEach.call(keys, function (currentKey) {
-            if (currentKey.classList.contains('clear')) {
-                currentKey.addEventListener('click', function (event) { tryHandleClick(clear); });
-            }
-            else if (currentKey.classList.contains('eval')) {
-                currentKey.addEventListener('click', function (event) { tryHandleClick(eval); });
-            }
-            else {
-                currentKey.addEventListener('click', function (event) { tryHandleClick(push, event.target.innerHTML); });
-            }
-        });
-    }
-
-    function tryHandleClick() {  // better to alert user on click-handler exception
         try {
-            if (arguments.length === 1) {
-                arguments[0]();
-            }
-            else if (arguments.length > 1) {
-                arguments[0](arguments[1]);
-            }
+            // selecting keys and top screen:
+            topScreen = document.querySelector('#top .screen');  // problems with old browsers
+            bottomScreen = document.querySelector('#bottom .screen');
+            keys = document.querySelectorAll('.key');
+
+            // adding functions as 'click' event-handlers, so as you don't have to invoke them from HTML:
+            Array.prototype.forEach.call(keys, function (currentKey) {
+                if (currentKey.classList.contains('clear')) {
+                    currentKey.addEventListener('click', function (event) {
+                        tryHandleClick(clear);
+                    });
+                }
+                else if (currentKey.classList.contains('eval')) {
+                    currentKey.addEventListener('click', function (event) {
+                        tryHandleClick(eval);
+                    });
+                }
+                else {
+                    currentKey.addEventListener('click', function (event) {
+                        tryHandleClick(push, event.target.innerHTML);
+                    });
+                }
+            });
         }
         catch (exc) {
-            console.log('Exception in \'click\' event-handler:\n' + exc.toString());
-            alert(':( An exception occurred while handling click event. See console.');
+            console.log('Exception while initializing event-handlers:\n' + (exc.stack ? exc.stack : exc.toString()));
+            alert(':( Sorry, an exception occurred while initializing javascript code. Calculator won\'t work. See console.');
+        }
+
+        function tryHandleClick() {  // better to alert user on click-handler exception
+            try {
+                if (arguments.length === 1) {
+                    arguments[0]();
+                }
+                else if (arguments.length > 1) {
+                    arguments[0](arguments[1]);
+                }
+            }
+            catch (exc) {
+                console.log('Exception in \'click\' event-handler:\n' + (exc.stack ? exc.stack : exc.toString()));
+                alert(':( An exception occurred while handling click event. See console.');
+            }
         }
     }
 
     // after event-handlers, real calculator-logic
-    var keys;
-    var screen;
     var operators = ['+', '-', 'x', '÷'];
-    var regex = /^(\-?([0-9]+|([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+))([\+\-\*\/x÷]([0-9]+|([0-9]+\.[0-9]*)|([0-9]*\.[0-9]+)))*)?$/;  // regex to quick-text expressions
+    var regex = /^(\-?([0-9]+|([0-9]*\.[0-9]*)|Infinity|NaN)([\+\-\*\/x÷]([0-9]+|([0-9]*\.[0-9]*)|Infinity|NaN))*)?$/;  // regex to quick-text expressions
     var decimalAdded = false;
 
     function push(value) {  // let's enter something into our calculator
         var strValue = value.toString().replace(/\*/g, 'x').replace(/\//, '÷');  // for compatibility with *, /, and real numeric
-        if (screen.innerHTML.length > 0)
-            var lastChar = screen.innerHTML[screen.innerHTML.length - 1];
+        if (topScreen.innerHTML.length > 0)
+            var lastChar = topScreen.innerHTML[topScreen.innerHTML.length - 1];
         if (strValue === 'C') {  // 'strValue' is 'C'
             clear();  // redirection to function 'clear'
         }
         else if (strValue === '=') {
             eval();  // redirection to function 'eval'
-            return '=' + screen.innerHTML;
+            return '=' + topScreen.innerHTML;
         }
         else if (operators.indexOf(strValue) > -1) {  // 'strValue' is an operator
-            if (!lastChar || operators.indexOf(lastChar) === -1) {  // only if there is no operator at the end
-                screen.innerHTML += strValue;  // shall we append
+            if (!!lastChar && operators.indexOf(lastChar) === -1) {  // only if content is not empty and there is no operator at the end
+                topScreen.innerHTML += strValue;  // shall we append
                 decimalAdded = false;
                 return strValue;
             }
-            if (strValue === '-' && screen.innerHTML.length === 0) {  // however, 'minus' sign on the beginning of screen
-                screen.innerHTML += strValue;  // is also possible
+            if (strValue === '-' && topScreen.innerHTML.length === 0) {  // however, 'minus' sign on the beginning of screen
+                topScreen.innerHTML += strValue;  // is also possible
                 return strValue;
             }
         }
         else if (strValue === '.') {  // 'strValue' is a decimal point
-            if (!decimalAdded) {  // only if there is no decimal point in number
-                screen.innerHTML += strValue;  // shall we append
+            if (!decimalAdded) {  // only if there is no decimal point in number shall we append
+                if (!lastChar || operators.indexOf(lastChar) > -1)  // if content is empty or last char is operator
+                    strValue = '0.';  // let's fill gap with zero
+                topScreen.innerHTML += strValue;
                 decimalAdded = true;
                 return strValue;
             }
         }
         else if (!!strValue && strValue.length === 1 && !isNaN(parseInt(strValue))) {  // 'strVal' is a digit
-            screen.innerHTML += strValue;
+            topScreen.innerHTML += strValue;
             return strValue;
+        }
+        else if (strValue === 'Infinity' || strValue === 'NaN') {  // because of batch-enter we have to accept such things, as well
+            if (!lastChar || operators.indexOf(lastChar) > -1) {  // only at beginning or after an operator
+                topScreen.innerHTML += strValue;
+                return strValue;
+            }
         }
         else {  // someone has invoked it outside calculator, having no idea what this function expects
             throw 'Argument \'value\' of function \'calculator.push\' must be a valid digit, a decimal point or an operator';
@@ -97,7 +120,7 @@
     }
 
     function pushMany(expr) {  // batched-enter
-        var checkedExpr = screen.innerHTML + expr.toString();
+        var checkedExpr = topScreen.innerHTML + expr.toString();
         if (!checkedExpr.split('=').every(function (elem, ind, arr) {  // let's split it by '='
                 if (ind === 0)  // the first expression
                     return regex.test(elem);  // must mach prefixed by screen-content
@@ -109,32 +132,127 @@
                 'You can also use expression-chain with \'=\' as delimiter';
         clear();
         var answer = '';
-        Array.prototype.forEach.call(checkedExpr, function (currentExpr) {
+        // TODO how about iterating through the '='-splitted expressions instead of individual characters?
+        checkedExpr.match(/[0-9]|\.|[\+\-\*\/x÷]|=|Infinity|NaN]/g).forEach( function (currentExpr) {
             answer += push(currentExpr);
         });
         return answer;
     }
 
     function eval() {
-        if (screen.innerHTML.length === 0)  // if no text is there
-            return '';  // nothing to do
-        var equation = screen.innerHTML.replace(/x/g, '*').replace(/÷/g, '/');  // all 'x' to * and all '÷' to '/'
+        if (topScreen.innerHTML.length === 0)  // if no text is there
+            return NaN;  // nothing to do
+        var equation = topScreen.innerHTML;
         var lastChar = equation[equation.length - 1];
         if (operators.indexOf(lastChar) > -1 || lastChar === '.')  // if last char is an operator or decimal
             equation = equation.replace(/.$/, '');  // let's remove it
+        equation = equation.replace(/x/g, '*').replace(/÷/g, '/');  // all 'x' to * and all '÷' to '/'
+        var result;
         try {
-            var result = window.eval(equation);  // and we can try to evaluate it
-            screen.innerHTML = result;
+            result = window.eval(equation);  // and we can try to evaluate it
+            topScreen.innerHTML = result;
             decimalAdded = result !== Math.floor(result);
-            return result;
         }
         catch (exc) {  // for certain security, a catch-block -- easy to debug
-            throw 'Exception while evaluating expression (in \'calculator.eval\'):\n' + exc.toString();
+            throw 'Exception while evaluating expression (in \'calculator.eval\'):\n' + (exc.stack ? exc.stack : exc.toString());
         }
+        if (!!result) {
+            if (app.infoEnabled && !isNaN(result) && isFinite(result))
+                fetchInfo(result);
+            return result;
+        }
+        return NaN;
     }
 
     function clear() {
-        screen.innerHTML = '';
+        topScreen.innerHTML = '';
+        bottomScreen.innerHTML = '';
         decimalAdded = false;
     }
+
+    // finally, AJAX section
+    function fetchInfo(number) {
+        if (number === undefined || isNaN(number) || !isFinite(number))
+            throw 'Argument \'number\' of function \'calculator.fetchInfo\' must be a real, finite number.';
+        var numsToSend = [];
+        Array.prototype.push.apply(numsToSend, collectDigits(number));
+        if (number === Math.floor(number) && numsToSend.indexOf(number) === -1)
+            numsToSend.push(number);
+        var request;
+        if (window.XMLHttpRequest)
+            request = new XMLHttpRequest();
+        else if (window.ActiveXObject)
+            request = new ActiveXObject('Microsoft.XMLHTTP');
+        else {
+            app.infoEnabled = false;
+            console.log('Unable to detect AJAX-module of browser. Disabling info-mode.');
+            alert(':( Info-display has been switched off since Your Browser does not seem to support AJAX.');
+            return;
+        }
+        var url = 'http://numbersapi.com/' + numsToSend.join(',') + '?json';
+        request.open('GET', url);
+        //request.setRequestHeader('Content-Type', 'application/json');
+        request.onreadystatechange = function (event) {
+            var data = {};
+            if (tryParseData(event.target, data))
+                tryDisplayData(data);
+        };
+        request.send();
+        console.log('HTTP-request sent:\nGET ' + url);
+
+        function collectDigits(num) {
+            var digits = [];
+            for (var i = 0; i < 10; ++i) {
+                if (num.toString().indexOf(i.toString()) > -1) {
+                    digits.push(i);
+                }
+            }
+            return digits;
+        }
+        function tryParseData(req, data) {
+            if (req.readyState === 4) {
+                if (req.status !== 200) {
+                    console.log('HTTP-\'GET\'-request failed with status: ' + req.status);
+                    return false;
+                }
+                console.log('HTTP-\'GET\'-request successful.');
+                try {
+                    Object.assign(data, JSON.parse(req.responseText));
+                    return true;
+                }
+                catch (exc) {
+                    console.log('Exception when processing HTTP-response.\n' + (exc.stack ? exc.stack : exc.toString()));
+                }
+            }
+            return false;
+        }
+        function tryDisplayData(data) {
+            bottomScreen.innerHTML = '';
+            if (!!data.number && !!data.text) {
+                appendParagraph(data.number, data.text);
+            }
+            else {
+                for (var num in data) {
+                    if (data.hasOwnProperty(num)) {
+                        if (num != data[num].number || !data[num].text) {
+                            console.log('Exception when displaying info:\n' +
+                                'Property \'number\' and \'text\' cannot be found in response object.');
+                            break;
+                        }
+                        appendParagraph(data[num].number, data[num].text);
+                    }
+                }
+            }
+
+            function appendParagraph(num, txt) {
+                var title = document.createElement('h6');
+                var paragraph = document.createElement('p');
+                title.innerHTML = num + ':';
+                paragraph.innerHTML = txt;
+                bottomScreen.appendChild(title);
+                bottomScreen.appendChild(paragraph);
+            }
+        }
+    }
+
 })(window.calculator = window.calculator || {});

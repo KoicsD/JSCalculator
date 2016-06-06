@@ -19,7 +19,8 @@ html {
 /* Calculator with shadow-3D */
 #calculator {
     width: 325px;
-    height: auto;
+    /*height: 264px;*/
+    height: 461px;
     margin: 300px auto;
     padding: 20px;
 
@@ -41,6 +42,13 @@ html {
     padding: 0 7px 11px 0;
 }
 
+#bottom {
+    width: 285px;
+    height: 177px;
+    margin: 20px 0 0 0;
+    padding: 0;
+}
+
 #top, #keypad, .row {
     /* Clearing overflow between top and keypad */
     overflow: hidden;
@@ -57,17 +65,19 @@ html {
     margin-bottom: -11px;
 }
 
-/* Top screen style */
+/* Top screen */
+.screen {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    box-shadow: inset 2px 4px rgba(0, 0, 0, 0.2);
+}
+
 #top .screen {
     float: right;
     width: 212px;
     height: 40px;
     margin-bottom: 7px;
     padding: 0 10px;
-
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-    box-shadow: inset 2px 4px rgba(0, 0, 0, 0.2);
 
     /* Screen-typography */
     font: bold 17px "Lucida Console";
@@ -76,6 +86,31 @@ html {
     line-height: 40px;
     letter-spacing: 1px;
     text-shadow: 2px 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+#bottom .screen {
+    width: inherit;
+    height: inherit;
+    margin: 0;
+    padding: 10px;
+
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#bottom .screen * {
+    margin: 0 0 10px;
+
+    /* Screen-typography */
+    font: bold 14px "Lucida Console";
+    color: white;
+    text-align: left;
+    text-shadow: 2px 4px 1px rgba(0, 0, 0, 0.2);
+}
+
+#bottom .screen h6 {
+    font-size: 17px;
+    margin-bottom: 0;
 }
 
 /* Key-style */
