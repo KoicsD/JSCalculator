@@ -132,7 +132,7 @@
                 'must be an expression-chain with \'=\' as delimiter\n' +
                 'Each expression must be numbers separated by operators.\n' +
                 'No clear-character (\'C\') allowed.';
-        var answer = '';
+        var answer = topScreen.innerHTML;
         expressions.forEach( function (expr, ind, arr) {
             if (ind > 0)
                 answer += push('=');
